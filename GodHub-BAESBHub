@@ -1,0 +1,149 @@
+--// Anti Ban / Kick / AFK
+local mt = getrawmetatable(game)
+setreadonly(mt, false)
+local old = mt.__namecall
+mt.__namecall = newcclosure(function(self, ...)
+    local args = {...}
+    local method = getnamecallmethod()
+    if method == "Kick" or method == "kick" then
+        return warn("Anti Kick Triggered!")
+    end
+    return old(self, ...)
+end)
+setreadonly(mt, true)
+
+--// Anti AFK
+game:GetService("Players").LocalPlayer.Idled:Connect(function()
+    game:GetService("VirtualUser"):Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+    task.wait(1)
+    game:GetService("VirtualUser"):Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+end)
+
+--// Load UI Library
+loadstring(game:HttpGet("https://raw.githubusercontent.com/shlexware/Orion/main/source"))()
+local OrionLib = OrionLibrary
+
+--// GUI Intro Screen (Tên tác giả)
+local ScreenGui = Instance.new("ScreenGui", game.CoreGui)
+local Intro = Instance.new("TextLabel", ScreenGui)
+Intro.Size = UDim2.new(0, 400, 0, 100)
+Intro.Position = UDim2.new(0.5, -200, 0.5, -50)
+Intro.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+Intro.TextColor3 = Color3.fromRGB(255, 255, 255)
+Intro.Text = "BAESB Hub-GaG-by:GW90"
+Intro.Font = Enum.Font.GothamBold
+Intro.TextSize = 25
+Intro.BorderSizePixel = 0
+Intro.BackgroundTransparency = 0.2
+Intro.TextStrokeTransparency = 0.7
+Intro.TextScaled = true
+Intro.ZIndex = 10
+
+-- Tự động ẩn sau 2 giây
+task.wait(2)
+ScreenGui:Destroy()
+
+--// GUI Chính
+local Window = OrionLib:MakeWindow({
+    Name = "🌱 Grow a Garden | Multi Tool",
+    HidePremium = false,
+    SaveConfig = false,
+    ConfigFolder = "GrowAGardenScript",
+    IntroEnabled = false
+})
+
+-- Tab 1: Auto Farm
+local autoTab = Window:MakeTab({
+    Name = "🌾 Auto Farm",
+    Icon = "rbxassetid://4483345998",
+    PremiumOnly = false
+})
+
+autoTab:AddToggle({
+    Name = "Auto Farm: ON/OFF",
+    Default = false,
+    Callback = function(Value)
+        print("Auto Farm: ", Value)
+        -- Thêm chức năng sau
+    end
+})
+
+-- Tab 2: Bay
+local flyTab = Window:MakeTab({
+    Name = "🕊️ Bay",
+    Icon = "rbxassetid://4370345144",
+    PremiumOnly = false
+})
+
+flyTab:AddToggle({
+    Name = "Bay: ON/OFF",
+    Default = false,
+    Callback = function(Value)
+        print("Fly: ", Value)
+        -- Thêm chức năng sau
+    end
+})
+
+-- Tab 3: Spawn Pet
+local petTab = Window:MakeTab({
+    Name = "🐾 Spawn Pet",
+    Icon = "rbxassetid://1234567890", -- bạn có thể thay icon
+    PremiumOnly = false
+})
+
+petTab:AddButton({
+    Name = "Spawn Pet (Setup sau)",
+    Callback = function()
+        print("Spawn Pet")
+        -- Thêm chức năng sau
+    end
+})
+
+-- Tab 4: Cày Sự kiện
+local eventTab = Window:MakeTab({
+    Name = "🎉 Cày Sự Kiện",
+    Icon = "rbxassetid://7733960981", -- bạn có thể thay icon
+    PremiumOnly = false
+})
+
+eventTab:AddToggle({
+    Name = "Tự động cày sự kiện",
+    Default = false,
+    Callback = function(Value)
+        print("Auto Event: ", Value)
+        -- Thêm chức năng sau
+    end
+})
+
+--// Nút X để thoát script, có xác nhận
+Window:MakeTab({
+    Name = "❌ Thoát",
+    Icon = "rbxassetid://7734053491",
+    PremiumOnly = false
+}):AddButton({
+    Name = "Thoát Script",
+    Callback = function()
+        OrionLib:MakeNotification({
+            Name = "Xác nhận thoát",
+            Content = "Bạn có chắc muốn tắt script không?",
+            Image = "rbxassetid://7734053491",
+            Time = 8
+        })
+
+        OrionLib:MakeWindow({
+            Name = "❗Xác nhận thoát",
+            HidePremium = true,
+            SaveConfig = false,
+            ConfigFolder = "ConfirmExit"
+        }):MakeTab({
+            Name = "❗Xác nhận",
+            Icon = "",
+            PremiumOnly = false
+        }):AddButton({
+            Name = "✅ Có, thoát script",
+            Callback = function()
+                OrionLib:Destroy()
+            end
+        })
+    end
+})
